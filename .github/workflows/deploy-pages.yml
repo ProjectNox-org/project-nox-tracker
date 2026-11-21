@@ -39,6 +39,7 @@ jobs:
           /tmp/pw-runner/node_modules/.bin/playwright install chromium firefox
           NODE_PATH=/tmp/pw-runner/node_modules node tests/e2e_comprehensive.mjs --no-screenshots
           NODE_PATH=/tmp/pw-runner/node_modules node tests/e2e_duplicate_guard.mjs --no-screenshots
+          NODE_PATH=/tmp/pw-runner/node_modules node tests/e2e_sync_regressions.mjs
       - uses: actions/configure-pages@v5
       - name: Preparar arquivos estáticos
         run: |

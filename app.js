@@ -22,6 +22,7 @@
 
   const CACHE_KEY = "project-nox-live-issues-v3";
   const CACHE_TIME_KEY = "project-nox-live-issues-v3-time";
+  const CACHE_LIVE_TIME_KEY = "project-nox-live-issues-v3-live-time";
   const CACHE_SIG_KEY = "project-nox-live-issues-v3-sig";
   const CACHE_VERSION_KEY = "project-nox-live-issues-v3-ver";
   const CACHE_ETAG_STORE_KEY = "project-nox-live-etags-v3";
@@ -37,6 +38,7 @@
   const CHECK_INTERVAL = 10 * 1000;            // 10s lightweight snapshot check cycle
   const GITHUB_API_MIN_INTERVAL = 65 * 1000;   // <= ~55 req/h safe for unauthenticated 60 req/h limit
   const THROTTLED_API_INTERVAL = 180 * 1000;   // 3 min when remaining quota < 15
+  const RATE_LIMIT_STALE_MS = 60 * 60 * 1000;  // 1h GitHub core rate-limit window reset
   const RECONCILE_INTERVAL = 10 * 60 * 1000;   // 10 min full inventory reconciliation
   const FETCH_LOCK_TTL = 15 * 1000;            // 15s cross-tab lock TTL
   const MAX_SAFE_PAGES = 100;                  // Up to 10,000 issues safety ceiling
@@ -115,6 +117,7 @@
   let generatedAt = null;
   let snapshotGeneratedAtMs = 0;
   let lastCheckedAt = 0;
+  let lastSnapshotCheckAt = 0;
   let lastFullReconcileAtMs = 0;
   let snapshotEtag = "";
   let hasValidatedSnapshot = false;
@@ -127,10 +130,10 @@
   let rateLimitUpdatedAt = 0;
   let lastSyncTime = 0;
   let lastApiSyncTime = 0;
-  let lastReconcileTime = Date.now();
+  let lastReconcileTime = 0;
   let currentDataVersion = 0;
   let syncChannel = null;
-  let activeDataSource = "loading"; // "loading" | "live" | "published" | "offline" | "rate_limited" | "stale_error" | "error"
+  let activeDataSource = "loading"; // "loading" | "live" | "cached" | "published" | "offline" | "rate_limited" | "stale_error" | "error"
   const etagStore = new Map();
   const pageIssuesStore = new Map();
 
@@ -190,6 +193,17 @@
     }
   }
 
+  function clearAllStoredEtagsAndPages() {
+    etagStore.clear();
+    pageIssuesStore.clear();
+    try {
+      localStorage.removeItem(CACHE_ETAG_STORE_KEY);
+      localStorage.removeItem(CACHE_PAGE_STORE_KEY);
+    } catch {
+      // ignore
+    }
+  }
+
   function initPageIssuesStore() {
     try {
       const raw = safeStorageGet(CACHE_PAGE_STORE_KEY);
@@ -197,7 +211,11 @@
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === "object") {
           for (const [k, v] of Object.entries(parsed)) {
-            if (Array.isArray(v)) pageIssuesStore.set(k, v);
+            if (Array.isArray(v)) {
+              pageIssuesStore.set(k, { issues: v, hasMore: v.length >= 100 });
+            } else if (v && typeof v === "object" && Array.isArray(v.issues)) {
+              pageIssuesStore.set(k, { issues: v.issues, hasMore: Boolean(v.hasMore) });
+            }
           }
         }
       }
@@ -207,12 +225,20 @@
   }
 
   function getStoredPageIssues(url) {
-    return pageIssuesStore.get(url) || null;
+    const entry = pageIssuesStore.get(url);
+    if (!entry) return null;
+    if (Array.isArray(entry)) {
+      return { issues: entry, hasMore: entry.length >= 100 };
+    }
+    if (entry && typeof entry === "object" && Array.isArray(entry.issues)) {
+      return { issues: entry.issues, hasMore: Boolean(entry.hasMore) };
+    }
+    return null;
   }
 
-  function setStoredPageIssues(url, batch, persist = false) {
+  function setStoredPageIssues(url, batch, hasMore = false, persist = false) {
     if (!url || !Array.isArray(batch)) return;
-    pageIssuesStore.set(url, batch);
+    pageIssuesStore.set(url, { issues: batch, hasMore: Boolean(hasMore) });
     if (persist) {
       persistPageIssuesStore();
     }
@@ -221,8 +247,8 @@
   function persistPageIssuesStore() {
     try {
       let totalItems = 0;
-      for (const batch of pageIssuesStore.values()) {
-        totalItems += batch.length;
+      for (const entry of pageIssuesStore.values()) {
+        totalItems += Array.isArray(entry) ? entry.length : (entry?.issues?.length || 0);
       }
       if (totalItems > 1000) return;
       safeStorageSet(CACHE_PAGE_STORE_KEY, JSON.stringify(Object.fromEntries(pageIssuesStore.entries())));
@@ -337,6 +363,13 @@
       const incomingUntil = Number(parsed.until || 0);
       const incomingRemaining = parsed.remaining === null || parsed.remaining === undefined ? null : Number(parsed.remaining);
       const now = Date.now();
+      const isStaleWindow = incomingUpdatedAt > 0 && (now - incomingUpdatedAt) > RATE_LIMIT_STALE_MS;
+      if (isStaleWindow && incomingUntil <= now) {
+        rateLimitUntil = 0;
+        rateLimitRemaining = null;
+        rateLimitUpdatedAt = incomingUpdatedAt;
+        return;
+      }
       if (incomingUntil > now) {
         rateLimitUntil = Math.max(rateLimitUntil, incomingUntil);
       } else if (incomingUpdatedAt > rateLimitUpdatedAt && incomingUntil === 0) {
@@ -374,6 +407,7 @@
   initPageIssuesStore();
   syncRateLimitFromStorage();
   currentDataVersion = Number(safeStorageGet(CACHE_VERSION_KEY) || 0);
+  lastReconcileTime = Number(safeStorageGet(STORAGE_LAST_RECONCILE_KEY) || 0);
 
   try {
     if (typeof BroadcastChannel !== "undefined") {
@@ -399,7 +433,11 @@
           const incomingVer = Number(event.data.version || 0);
           if (incomingVer && incomingVer < currentDataVersion) return;
           if (incomingVer) currentDataVersion = Math.max(currentDataVersion, incomingVer);
-          applyRawIssues(validated, event.data.generatedAt, event.data.dataSource || "live", false, {
+          const incomingSource = event.data.dataSource || "live";
+          if (incomingSource === "live") {
+            lastCheckedAt = Date.now();
+          }
+          applyRawIssues(validated, event.data.generatedAt, incomingSource, false, {
             isFullSnapshot: Boolean(event.data.isFullSnapshot)
           });
         }
@@ -428,6 +466,7 @@
           const parsed = JSON.parse(e.newValue);
           const validated = sanitizeAndDeduplicateIssues(parsed);
           if (validated) {
+            lastCheckedAt = Date.now();
             applyRawIssues(validated, newTime, "live", false, { isFullSnapshot: true });
           }
         }
@@ -1742,6 +1781,11 @@
       persistRateLimitState(true);
     }
 
+    if (rateLimitRemaining !== null && rateLimitUpdatedAt > 0 && (now - rateLimitUpdatedAt) > RATE_LIMIT_STALE_MS && rateLimitUntil <= now) {
+      rateLimitRemaining = null;
+      persistRateLimitState(false);
+    }
+
     if (rateLimitUntil > now) return false;
 
     if (rateLimitRemaining !== null && rateLimitRemaining <= 0) {
@@ -1827,14 +1871,17 @@
         "Accept": "application/vnd.github+json"
       };
       const cachedEtag = getStoredEtag(targetUrl);
-      const cachedBatch = getStoredPageIssues(targetUrl);
+      const cachedEntry = getStoredPageIssues(targetUrl);
 
-      const canSendEtag = !manual && Boolean(cachedEtag) && (!isFull || (Array.isArray(cachedBatch) && cachedBatch.length > 0));
+      const canSendEtag = !manual && Boolean(cachedEtag) && (!isFull || (cachedEntry && cachedEntry.issues.length > 0));
       if (canSendEtag) {
         headers["If-None-Match"] = cachedEtag;
       }
 
-      const res = await fetch(targetUrl, { headers });
+      const res = await fetch(targetUrl, {
+        cache: manual ? "no-store" : "no-cache",
+        headers
+      });
       const isRateLimited = parseRateLimitHeaders(res);
 
       if (res.status === 304) {
@@ -1847,8 +1894,8 @@
           }
           return { notModified: true, incomplete: false };
         }
-        if (Array.isArray(cachedBatch) && cachedBatch.length > 0) {
-          const validatedBatch = sanitizeAndDeduplicateIssues(cachedBatch);
+        if (cachedEntry && cachedEntry.issues.length > 0) {
+          const validatedBatch = sanitizeAndDeduplicateIssues(cachedEntry.issues);
           if (!validatedBatch) {
             clearStoredEtag(targetUrl);
             incomplete = true;
@@ -1860,7 +1907,7 @@
               all.push(item);
             }
           }
-          if (cachedBatch.length < 100) break;
+          if (!cachedEntry.hasMore) break;
           if (page >= maxPages || isRateLimited || rateLimitRemaining === 0) {
             incomplete = true;
             break;
@@ -1907,8 +1954,11 @@
 
       if (rawBatch.length === 0) break;
 
+      const linkHeader = res.headers.get("link");
+      const morePages = linkHeader ? hasNextLink(linkHeader) : rawBatch.length >= 100;
+
       if (isFull) {
-        setStoredPageIssues(targetUrl, validatedBatch);
+        setStoredPageIssues(targetUrl, validatedBatch, morePages);
       }
 
       for (const item of validatedBatch) {
@@ -1918,8 +1968,6 @@
         }
       }
 
-      const linkHeader = res.headers.get("link");
-      const morePages = linkHeader ? hasNextLink(linkHeader) : rawBatch.length >= 100;
       if (!morePages || rawBatch.length < 100) break;
 
       if (page >= maxPages || isRateLimited || rateLimitRemaining === 0) {
@@ -2021,11 +2069,23 @@
       el.updated.title = lastFullReconcileAtMs
         ? `Última verificação: ${checkedTime} • Reconciliação completa: ${new Date(lastFullReconcileAtMs).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
         : `Última verificação: ${checkedTime}`;
+    } else if (dataSource === "cached") {
+      const liveIso = safeStorageGet(CACHE_LIVE_TIME_KEY) || generatedAt;
+      const liveTime = liveIso
+        ? new Date(liveIso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+        : "";
+      const liveDate = liveIso ? formatDate(liveIso) : "";
+      el.updated.textContent = liveTime
+        ? `Cache local de ${liveDate} às ${liveTime}`
+        : "Dados em cache local";
+      el.updated.title = "Aguardando verificação na API pública do GitHub";
     } else if (dataSource === "published") {
       el.updated.textContent = snapTime
         ? `Dados disponíveis de ${snapDate} às ${snapTime}`
         : "Dados disponíveis";
-      el.updated.title = checkedTime ? `Última verificação às ${checkedTime}` : "";
+      el.updated.title = checkedTime
+        ? `Última verificação às ${checkedTime}`
+        : "Snapshot publicado; aguardando verificação ao vivo";
     } else if (dataSource === "offline") {
       el.updated.classList.add("is-stale");
       el.updated.textContent = "Exibindo os últimos dados disponíveis (offline).";
@@ -2083,7 +2143,9 @@
     updateStatusText(dataSource);
 
     if (dataSource === "live") {
+      const nowIso = new Date().toISOString();
       safeStorageSet(STORAGE_LAST_SYNC_KEY, String(Date.now()));
+      safeStorageSet(CACHE_LIVE_TIME_KEY, nowIso);
     }
     if (generatedAt) safeStorageSet(CACHE_TIME_KEY, String(generatedAt));
     safeStorageSet(CACHE_SIG_KEY, newSignature);
@@ -2129,15 +2191,17 @@
     let lockRenewTimer = null;
     try {
       // 1. Lightweight static snapshot check (~10s loop, 0 GitHub API quota cost)
-      const snapResult = await fetchStaticSnapshotIfUpdated();
-      if (snapResult && Array.isArray(snapResult.issues)) {
-        const snapMs = parseTimestampMs(snapResult.generated_at);
-        if (!hasLoadedData || !snapshotGeneratedAtMs || snapMs > snapshotGeneratedAtMs) {
-          lastCheckedAt = Date.now();
-          const reconciledSnap = currentRawIssues.length > 0
-            ? reconcileFullSnapshot(snapResult.issues, currentRawIssues, snapMs)
-            : snapResult.issues;
-          applyRawIssues(reconciledSnap, snapResult.generated_at, "published", true, { isFullSnapshot: true });
+      if (Date.now() - lastSnapshotCheckAt >= nextPollDelay()) {
+        const snapResult = await fetchStaticSnapshotIfUpdated();
+        lastSnapshotCheckAt = Date.now();
+        if (snapResult && Array.isArray(snapResult.issues)) {
+          const snapMs = parseTimestampMs(snapResult.generated_at);
+          if (!hasLoadedData || !snapshotGeneratedAtMs || snapMs > snapshotGeneratedAtMs) {
+            const reconciledSnap = currentRawIssues.length > 0
+              ? reconcileFullSnapshot(snapResult.issues, currentRawIssues, snapMs)
+              : snapResult.issues;
+            applyRawIssues(reconciledSnap, snapResult.generated_at, "published", true, { isFullSnapshot: true });
+          }
         }
       }
 
@@ -2161,6 +2225,7 @@
           safeStorageSet(STORAGE_LAST_SYNC_KEY, String(lastApiSyncTime));
 
           if (freshResult && freshResult.notModified && !freshResult.incomplete) {
+            safeStorageSet(CACHE_LIVE_TIME_KEY, new Date(lastApiSyncTime).toISOString());
             if (isFullReconcile) {
               lastReconcileTime = lastApiSyncTime;
               lastFullReconcileAtMs = lastApiSyncTime;
@@ -2177,7 +2242,7 @@
 
             applyRawIssues(
               merged,
-              canReplaceCatalog ? new Date().toISOString() : generatedAt,
+              canReplaceCatalog ? new Date(lastApiSyncTime).toISOString() : generatedAt,
               freshResult.incomplete && rateLimitUntil > Date.now() ? "rate_limited" : "live",
               true,
               { isFullSnapshot: canReplaceCatalog }
@@ -2201,7 +2266,10 @@
           const parsed = JSON.parse(cachedStr);
           const validated = sanitizeAndDeduplicateIssues(parsed);
           if (validated) {
-            applyRawIssues(validated, cachedTime, "live", false, { isFullSnapshot: false });
+            const storedApiTime = Number(safeStorageGet(STORAGE_LAST_API_SYNC_KEY) || 0);
+            const isRecentSync = storedApiTime > 0 && (Date.now() - storedApiTime) < THROTTLED_API_INTERVAL;
+            if (isRecentSync) lastCheckedAt = storedApiTime;
+            applyRawIssues(validated, cachedTime, isRecentSync ? "live" : "cached", false, { isFullSnapshot: false });
           }
         }
       }
@@ -2305,18 +2373,31 @@
             const etag = res.headers.get("etag");
             if (etag) snapshotEtag = etag;
             hasValidatedSnapshot = true;
+            lastSnapshotCheckAt = Date.now();
 
             const staticTime = parseTimestampMs(json.generated_at);
             const cacheTimeVal = parseTimestampMs(cachedTime);
+            const cachedLiveTimeMs = parseTimestampMs(safeStorageGet(CACHE_LIVE_TIME_KEY));
+            const effectiveCacheTimeMs = Math.max(cacheTimeVal, cachedLiveTimeMs);
 
-            if (cachedIssues && cacheTimeVal > staticTime) {
+            if (cachedIssues && effectiveCacheTimeMs > staticTime) {
               rawIssues = cachedIssues;
-              generatedAt = cachedTime;
-              dataSource = "live";
+              generatedAt = cachedTime || (typeof json.generated_at === "string" ? json.generated_at : new Date(effectiveCacheTimeMs).toISOString());
+              dataSource = "cached";
             } else {
               rawIssues = validated;
               generatedAt = typeof json.generated_at === "string" ? json.generated_at : new Date().toISOString();
               dataSource = "published";
+              const snapSig = dataSignature(validated.map(normalizeIssue));
+              const storedSig = safeStorageGet(CACHE_SIG_KEY);
+              if (!cachedIssues || (storedSig && storedSig !== snapSig)) {
+                clearAllStoredEtagsAndPages();
+              }
+            }
+
+            if (!lastReconcileTime) {
+              lastReconcileTime = Date.now();
+              safeStorageSet(STORAGE_LAST_RECONCILE_KEY, String(lastReconcileTime));
             }
           }
         }
@@ -2344,7 +2425,6 @@
     }
 
     if (Array.isArray(rawIssues)) {
-      lastCheckedAt = lastCheckedAt || Date.now();
       applyRawIssues(rawIssues, generatedAt, dataSource, false, { isFullSnapshot: true });
     } else {
       hasLoadedData = false;
@@ -2355,7 +2435,11 @@
 
   function initLiveSync() {
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    scheduleNextPoll(nextPollDelay());
+    if (document.visibilityState !== "hidden" && shouldQueryGitHubApi(false)) {
+      refreshLive();
+    } else {
+      scheduleNextPoll(nextPollDelay());
+    }
   }
 
   // Periodic relative status text refresh (visual only; #updated has no aria-live)
@@ -2382,9 +2466,12 @@
     initLiveSync();
   }
 
-  window.addEventListener("pageshow", () => {
+  window.addEventListener("pageshow", (event) => {
     syncFromUrl();
     if (hasLoadedData) renderTickets();
+    if (event && event.persisted) {
+      handleVisibilityChange();
+    }
   });
 
   if (document.readyState === "loading") {
