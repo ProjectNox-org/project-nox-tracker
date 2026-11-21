@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-21T11:44:46.276662+00:00",
+  "generated_at": "2026-11-21T18:17:31.398475+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -290,11 +290,11 @@
       "number": 148,
       "title": "[Problema na extensão]: Fliptru — Não está aparecendo todos os capitulos das obras dessa extensão",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/148",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-12T03:06:08Z",
-      "updated_at": "2026-11-12T03:06:16Z",
-      "closed_at": null,
+      "updated_at": "2026-11-21T17:12:24Z",
+      "closed_at": "2026-11-21T17:12:15Z",
       "comments": 0,
       "labels": [
         {
@@ -304,10 +304,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
@@ -622,11 +618,11 @@
       "number": 138,
       "title": "[Mudança de domínio]: CineVEO",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/138",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-09T19:56:44Z",
-      "updated_at": "2026-11-09T19:56:54Z",
-      "closed_at": null,
+      "updated_at": "2026-11-21T17:11:57Z",
+      "closed_at": "2026-11-21T17:11:49Z",
       "comments": 0,
       "labels": [
         {
@@ -636,10 +632,6 @@
         {
           "name": "Mudança de domínio",
           "color": "06b6d4"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
@@ -785,9 +777,9 @@
       "state": "open",
       "state_reason": null,
       "created_at": "2026-11-07T21:01:53Z",
-      "updated_at": "2026-11-20T13:52:05Z",
+      "updated_at": "2026-11-21T12:02:29Z",
       "closed_at": null,
-      "comments": 1,
+      "comments": 0,
       "labels": [
         {
           "name": "Problema na extensão",
