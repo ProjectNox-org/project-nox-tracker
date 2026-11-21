@@ -1,7 +1,103 @@
 {
-  "generated_at": "2026-11-21T18:17:31.398475+00:00",
+  "generated_at": "2026-11-21T23:28:39.997835+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
+    {
+      "number": 174,
+      "title": "[Problema na extensão]: LycanToons — (auto lembrete) Lycan bloqueando mihon",
+      "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/174",
+      "state": "open",
+      "state_reason": null,
+      "created_at": "2026-11-21T23:28:05Z",
+      "updated_at": "2026-11-21T23:28:14Z",
+      "closed_at": null,
+      "comments": 0,
+      "labels": [
+        {
+          "name": "Problema na extensão",
+          "color": "ef4444"
+        },
+        {
+          "name": "Mangá",
+          "color": "3b82f6"
+        },
+        {
+          "name": "Em análise",
+          "color": "eab308"
+        }
+      ],
+      "reactions": {
+        "total_count": 0,
+        "+1": 0
+      },
+      "author": {
+        "login": "Awerkori"
+      }
+    },
+    {
+      "number": 173,
+      "title": "[Problema na extensão]: Lycan Toons — Lycan toons dando problema por detectar IP do mihon",
+      "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/173",
+      "state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-11-21T23:10:18Z",
+      "updated_at": "2026-11-21T23:19:35Z",
+      "closed_at": "2026-11-21T23:19:30Z",
+      "comments": 1,
+      "labels": [
+        {
+          "name": "Problema na extensão",
+          "color": "ef4444"
+        },
+        {
+          "name": "Mangá",
+          "color": "3b82f6"
+        },
+        {
+          "name": "Concluído",
+          "color": "10b981"
+        }
+      ],
+      "reactions": {
+        "total_count": 0,
+        "+1": 0
+      },
+      "author": {
+        "login": "ShanaraEshily"
+      }
+    },
+    {
+      "number": 172,
+      "title": "[Problema na extensão]: Roxinha — Roxinha, Login",
+      "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/172",
+      "state": "open",
+      "state_reason": null,
+      "created_at": "2026-11-21T21:58:31Z",
+      "updated_at": "2026-11-21T21:58:40Z",
+      "closed_at": null,
+      "comments": 0,
+      "labels": [
+        {
+          "name": "Problema na extensão",
+          "color": "ef4444"
+        },
+        {
+          "name": "Mangá",
+          "color": "3b82f6"
+        },
+        {
+          "name": "Em análise",
+          "color": "eab308"
+        }
+      ],
+      "reactions": {
+        "total_count": 0,
+        "+1": 0
+      },
+      "author": {
+        "login": "Kah-M"
+      }
+    },
     {
       "number": 157,
       "title": "[Problema na extensão]: Manhuarm — Manga log-in murim capítulos errados",
@@ -350,11 +446,11 @@
       "number": 146,
       "title": "[Problema na extensão]: Argos Comics — Argos Comics http 404",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/146",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-11T13:42:36Z",
-      "updated_at": "2026-11-11T13:42:45Z",
-      "closed_at": null,
+      "updated_at": "2026-11-21T19:58:44Z",
+      "closed_at": "2026-11-21T19:58:33Z",
       "comments": 0,
       "labels": [
         {
@@ -364,10 +460,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
@@ -710,11 +802,11 @@
       "number": 134,
       "title": "[Problema na extensão]: Monte tai — Problema na extensão monte tai: lentidão nos dowloads de capitulos",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/134",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-09T09:39:20Z",
-      "updated_at": "2026-11-09T09:39:30Z",
-      "closed_at": null,
+      "updated_at": "2026-11-21T22:06:34Z",
+      "closed_at": "2026-11-21T22:06:27Z",
       "comments": 0,
       "labels": [
         {
@@ -724,10 +816,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
@@ -902,11 +990,11 @@
       "number": 128,
       "title": "[Problema na extensão]: Redetoons — Extensão com problema",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/128",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-04T00:30:32Z",
-      "updated_at": "2026-11-04T00:30:43Z",
-      "closed_at": null,
+      "updated_at": "2026-11-21T20:24:16Z",
+      "closed_at": "2026-11-21T20:24:08Z",
       "comments": 0,
       "labels": [
         {
@@ -916,10 +1004,6 @@
         {
           "name": "Anime",
           "color": "6366f1"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
