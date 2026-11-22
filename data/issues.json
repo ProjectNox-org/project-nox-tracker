@@ -1,7 +1,39 @@
 {
-  "generated_at": "2026-11-22T15:56:25.286450+00:00",
+  "generated_at": "2026-11-22T20:14:58.719274+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
+    {
+      "number": 181,
+      "title": "[Problema na extensão]: Mangas Brasuka — Erro de nas obras de mangas brasuka",
+      "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/181",
+      "state": "open",
+      "state_reason": null,
+      "created_at": "2026-11-22T20:14:35Z",
+      "updated_at": "2026-11-22T20:14:44Z",
+      "closed_at": null,
+      "comments": 0,
+      "labels": [
+        {
+          "name": "Problema na extensão",
+          "color": "ef4444"
+        },
+        {
+          "name": "Mangá",
+          "color": "3b82f6"
+        },
+        {
+          "name": "Em análise",
+          "color": "eab308"
+        }
+      ],
+      "reactions": {
+        "total_count": 0,
+        "+1": 0
+      },
+      "author": {
+        "login": "Flyscorpionbr22"
+      }
+    },
     {
       "number": 180,
       "title": "[Problema na extensão]: Mugiwaras Oficial — Mugiwaras captura required",
