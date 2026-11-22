@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T22:51:47.197883+00:00",
+  "generated_at": "2026-11-22T23:24:31.426581+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -426,20 +426,16 @@
       "number": 151,
       "title": "[Sugestão]: Adicionar sistema de cadastro e login de contas do Hanami Heaven na extensão",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/151",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-14T22:29:01Z",
-      "updated_at": "2026-11-22T22:51:23Z",
-      "closed_at": null,
-      "comments": 1,
+      "updated_at": "2026-11-22T23:24:17Z",
+      "closed_at": "2026-11-22T23:24:10Z",
+      "comments": 2,
       "labels": [
         {
           "name": "Sugestão",
           "color": "ec4899"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         },
         {
           "name": "Conteúdo +18",
