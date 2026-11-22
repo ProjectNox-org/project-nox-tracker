@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T22:14:40.987136+00:00",
+  "generated_at": "2026-11-22T22:32:21.557813+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -1210,12 +1210,12 @@
       "number": 125,
       "title": "[Problema na extensão]: hanami heaven — Hanami",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/125",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-02T09:52:08Z",
-      "updated_at": "2026-11-02T09:52:24Z",
-      "closed_at": null,
-      "comments": 0,
+      "updated_at": "2026-11-22T22:32:04Z",
+      "closed_at": "2026-11-22T22:31:57Z",
+      "comments": 1,
       "labels": [
         {
           "name": "Problema na extensão",
@@ -1224,10 +1224,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
