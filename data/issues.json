@@ -1,7 +1,39 @@
 {
-  "generated_at": "2026-11-22T11:03:29.161236+00:00",
+  "generated_at": "2026-11-22T11:13:56.452077+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
+    {
+      "number": 180,
+      "title": "[Problema na extensão]: Mugiwaras Oficial — Mugiwaras captura required",
+      "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/180",
+      "state": "open",
+      "state_reason": null,
+      "created_at": "2026-11-22T11:13:35Z",
+      "updated_at": "2026-11-22T11:13:43Z",
+      "closed_at": null,
+      "comments": 0,
+      "labels": [
+        {
+          "name": "Problema na extensão",
+          "color": "ef4444"
+        },
+        {
+          "name": "Mangá",
+          "color": "3b82f6"
+        },
+        {
+          "name": "Em análise",
+          "color": "eab308"
+        }
+      ],
+      "reactions": {
+        "total_count": 0,
+        "+1": 0
+      },
+      "author": {
+        "login": "LUCASGYNBR"
+      }
+    },
     {
       "number": 179,
       "title": "[Problema na extensão]: Manhuarm — Manhuarm error",
