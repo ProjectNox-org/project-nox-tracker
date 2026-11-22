@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T22:12:34.091890+00:00",
+  "generated_at": "2026-11-22T22:14:40.987136+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -1274,12 +1274,12 @@
       "number": 123,
       "title": "[Nova extensão]: Secozzi",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/123",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-01T03:38:36Z",
-      "updated_at": "2026-11-01T03:38:47Z",
-      "closed_at": null,
-      "comments": 0,
+      "updated_at": "2026-11-22T22:14:19Z",
+      "closed_at": "2026-11-22T22:14:12Z",
+      "comments": 1,
       "labels": [
         {
           "name": "Anime",
@@ -1290,8 +1290,8 @@
           "color": "8b5cf6"
         },
         {
-          "name": "Em análise",
-          "color": "eab308"
+          "name": "Concluído",
+          "color": "10b981"
         },
         {
           "name": "Conteúdo +18",
