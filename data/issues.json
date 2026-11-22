@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T21:08:54.385063+00:00",
+  "generated_at": "2026-11-22T22:12:34.091890+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -994,12 +994,12 @@
       "number": 132,
       "title": "[Problema na extensão]: Bakai — Bakai no pages found",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/132",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-07T21:01:53Z",
-      "updated_at": "2026-11-21T12:02:29Z",
-      "closed_at": null,
-      "comments": 0,
+      "updated_at": "2026-11-22T22:12:18Z",
+      "closed_at": "2026-11-22T22:12:14Z",
+      "comments": 1,
       "labels": [
         {
           "name": "Problema na extensão",
@@ -1008,10 +1008,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
