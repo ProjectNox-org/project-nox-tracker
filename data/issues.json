@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T05:21:51.366844+00:00",
+  "generated_at": "2026-11-23T05:52:26.931491+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -134,11 +134,11 @@
       "number": 174,
       "title": "[Problema na extensão]: LycanToons — (auto lembrete) Lycan bloqueando mihon",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/174",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-21T23:28:05Z",
-      "updated_at": "2026-11-21T23:28:14Z",
-      "closed_at": null,
+      "updated_at": "2026-11-23T05:52:08Z",
+      "closed_at": "2026-11-23T05:52:01Z",
       "comments": 0,
       "labels": [
         {
@@ -148,10 +148,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
