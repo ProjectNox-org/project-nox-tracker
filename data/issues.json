@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T00:27:50.468194+00:00",
+  "generated_at": "2026-11-23T02:27:49.495511+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -159,8 +159,8 @@
         }
       ],
       "reactions": {
-        "total_count": 1,
-        "+1": 1
+        "total_count": 2,
+        "+1": 2
       },
       "author": {
         "login": "Awerkori"
@@ -606,12 +606,12 @@
       "number": 145,
       "title": "[Problema na extensão]: Blackout Comics — Blackout Comics HTTP 403, verifique o site na WebView",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/145",
-      "state": "open",
-      "state_reason": "reopened",
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-11T08:17:32Z",
-      "updated_at": "2026-11-13T15:24:46Z",
-      "closed_at": null,
-      "comments": 0,
+      "updated_at": "2026-11-23T02:27:48Z",
+      "closed_at": "2026-11-23T02:27:48Z",
+      "comments": 1,
       "labels": [
         {
           "name": "Problema na extensão",
@@ -638,20 +638,20 @@
       "number": 144,
       "title": "[Sugestão]: Blackout Comics",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/144",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-10T19:10:25Z",
-      "updated_at": "2026-11-10T19:10:35Z",
-      "closed_at": null,
-      "comments": 0,
+      "updated_at": "2026-11-23T02:27:34Z",
+      "closed_at": "2026-11-23T02:27:30Z",
+      "comments": 1,
       "labels": [
         {
           "name": "Sugestão",
           "color": "ec4899"
         },
         {
-          "name": "Em análise",
-          "color": "eab308"
+          "name": "Concluído",
+          "color": "10b981"
         }
       ],
       "reactions": {
