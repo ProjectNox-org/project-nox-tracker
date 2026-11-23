@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T02:27:49.495511+00:00",
+  "generated_at": "2026-11-23T02:28:17.516308+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -609,7 +609,7 @@
       "state": "closed",
       "state_reason": "completed",
       "created_at": "2026-11-11T08:17:32Z",
-      "updated_at": "2026-11-23T02:27:48Z",
+      "updated_at": "2026-11-23T02:27:55Z",
       "closed_at": "2026-11-23T02:27:48Z",
       "comments": 1,
       "labels": [
@@ -620,10 +620,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
