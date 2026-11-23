@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T22:01:35.582422+00:00",
+  "generated_at": "2026-11-23T23:22:15.378487+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -9,9 +9,9 @@
       "state": "closed",
       "state_reason": "completed",
       "created_at": "2026-11-23T16:44:21Z",
-      "updated_at": "2026-11-23T21:32:48Z",
+      "updated_at": "2026-11-23T23:13:07Z",
       "closed_at": "2026-11-23T21:24:46Z",
-      "comments": 6,
+      "comments": 8,
       "labels": [
         {
           "name": "Problema na extensão",
@@ -782,11 +782,11 @@
       "number": 140,
       "title": "[Nova extensão]: WatchAnimeHentai",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/140",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-09T20:13:21Z",
-      "updated_at": "2026-11-09T20:13:33Z",
-      "closed_at": null,
+      "updated_at": "2026-11-23T23:21:56Z",
+      "closed_at": "2026-11-23T23:21:48Z",
       "comments": 0,
       "labels": [
         {
@@ -796,10 +796,6 @@
         {
           "name": "Nova extensão",
           "color": "8b5cf6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         },
         {
           "name": "Conteúdo +18",
