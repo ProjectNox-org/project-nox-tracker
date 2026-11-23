@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T23:24:31.426581+00:00",
+  "generated_at": "2026-11-23T00:27:50.468194+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -429,9 +429,9 @@
       "state": "closed",
       "state_reason": "completed",
       "created_at": "2026-11-14T22:29:01Z",
-      "updated_at": "2026-11-22T23:24:17Z",
+      "updated_at": "2026-11-22T23:30:23Z",
       "closed_at": "2026-11-22T23:24:10Z",
-      "comments": 2,
+      "comments": 3,
       "labels": [
         {
           "name": "Sugestão",
