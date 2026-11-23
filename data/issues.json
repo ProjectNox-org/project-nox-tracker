@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T21:25:16.788679+00:00",
+  "generated_at": "2026-11-23T22:01:35.582422+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -9,9 +9,9 @@
       "state": "closed",
       "state_reason": "completed",
       "created_at": "2026-11-23T16:44:21Z",
-      "updated_at": "2026-11-23T21:24:55Z",
+      "updated_at": "2026-11-23T21:32:48Z",
       "closed_at": "2026-11-23T21:24:46Z",
-      "comments": 4,
+      "comments": 6,
       "labels": [
         {
           "name": "Problema na extensão",
@@ -286,11 +286,11 @@
       "number": 156,
       "title": "[Problema na extensão]: Animes Digital — Animes Digital Não Reproduz",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/156",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-20T08:15:13Z",
-      "updated_at": "2026-11-20T08:15:23Z",
-      "closed_at": null,
+      "updated_at": "2026-11-23T22:01:20Z",
+      "closed_at": "2026-11-23T22:01:10Z",
       "comments": 0,
       "labels": [
         {
@@ -300,10 +300,6 @@
         {
           "name": "Anime",
           "color": "6366f1"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
