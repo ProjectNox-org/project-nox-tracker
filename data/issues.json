@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T03:29:52.165102+00:00",
+  "generated_at": "2026-11-23T05:21:51.366844+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -73,9 +73,9 @@
       "state": "closed",
       "state_reason": "completed",
       "created_at": "2026-11-22T11:03:02Z",
-      "updated_at": "2026-11-23T03:29:33Z",
+      "updated_at": "2026-11-23T03:34:48Z",
       "closed_at": "2026-11-23T03:29:28Z",
-      "comments": 2,
+      "comments": 3,
       "labels": [
         {
           "name": "Problema na extensão",
@@ -450,12 +450,12 @@
       "number": 150,
       "title": "[Problema na extensão]: Xxxyaoi — Problemas com a extensão",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/150",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-13T07:56:18Z",
-      "updated_at": "2026-11-13T07:56:29Z",
-      "closed_at": null,
-      "comments": 0,
+      "updated_at": "2026-11-23T05:21:36Z",
+      "closed_at": "2026-11-23T05:21:30Z",
+      "comments": 1,
       "labels": [
         {
           "name": "Problema na extensão",
@@ -464,10 +464,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
