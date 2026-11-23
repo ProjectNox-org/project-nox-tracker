@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-11-23T20:22:12.970322+00:00",
+  "generated_at": "2026-11-23T21:25:16.788679+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
       "number": 182,
       "title": "[Problema na extensão]: Xxx yaoi — Problemas no 3xyaoi",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/182",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-23T16:44:21Z",
-      "updated_at": "2026-11-23T19:30:12Z",
-      "closed_at": null,
-      "comments": 2,
+      "updated_at": "2026-11-23T21:24:55Z",
+      "closed_at": "2026-11-23T21:24:46Z",
+      "comments": 4,
       "labels": [
         {
           "name": "Problema na extensão",
@@ -20,10 +20,6 @@
         {
           "name": "Mangá",
           "color": "3b82f6"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
