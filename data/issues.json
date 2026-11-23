@@ -1,7 +1,39 @@
 {
-  "generated_at": "2026-11-23T05:52:26.931491+00:00",
+  "generated_at": "2026-11-23T16:44:50.826369+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
+    {
+      "number": 182,
+      "title": "[Problema na extensão]: Xxx yaoi — Problemas no 3xyaoi",
+      "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/182",
+      "state": "open",
+      "state_reason": null,
+      "created_at": "2026-11-23T16:44:21Z",
+      "updated_at": "2026-11-23T16:44:31Z",
+      "closed_at": null,
+      "comments": 0,
+      "labels": [
+        {
+          "name": "Problema na extensão",
+          "color": "ef4444"
+        },
+        {
+          "name": "Mangá",
+          "color": "3b82f6"
+        },
+        {
+          "name": "Em análise",
+          "color": "eab308"
+        }
+      ],
+      "reactions": {
+        "total_count": 0,
+        "+1": 0
+      },
+      "author": {
+        "login": "mendesdayvison24-collab"
+      }
+    },
     {
       "number": 181,
       "title": "[Problema na extensão]: Mangas Brasuka — Erro de nas obras de mangas brasuka",
