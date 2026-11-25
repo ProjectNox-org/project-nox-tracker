@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T04:53:32.302250+00:00",
+  "generated_at": "2026-11-25T00:36:45.024400+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
     {
@@ -814,11 +814,11 @@
       "number": 139,
       "title": "[Problema na extensão]: Animeplayer",
       "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/139",
-      "state": "open",
-      "state_reason": null,
+      "state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-11-09T20:05:24Z",
-      "updated_at": "2026-11-09T20:05:34Z",
-      "closed_at": null,
+      "updated_at": "2026-11-24T15:49:33Z",
+      "closed_at": "2026-11-24T15:49:23Z",
       "comments": 0,
       "labels": [
         {
@@ -828,10 +828,6 @@
         {
           "name": "Anime",
           "color": "6366f1"
-        },
-        {
-          "name": "Em análise",
-          "color": "eab308"
         }
       ],
       "reactions": {
