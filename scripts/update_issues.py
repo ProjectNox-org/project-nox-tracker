@@ -103,15 +103,21 @@ def main() -> None:
     if not issues:
         raise ValueError("Nenhuma Issue válida foi obtida da API do GitHub! Abortando para evitar perda de dados.")
 
-    # Deduplicação determinística para prevenir registros duplicados oriundos de deslocamento de página na API
+    # Deduplicação determinística e validação básica para prevenir registros duplicados ou corrompidos
     seen_numbers = set()
     deduped_issues = []
     for issue in issues:
+        if not isinstance(issue, dict):
+            raise ValueError("Dados de Issue corrompidos recebidos da API (item não é um objeto).")
         num = issue.get("number")
-        if num and num not in seen_numbers:
+        if not isinstance(num, int) or isinstance(num, bool) or num <= 0:
+            raise ValueError(f"Dados de Issue incompletos ou corrompidos recebidos da API (number inválido: {num!r}).")
+        if issue.get("state") not in ("open", "closed"):
+            raise ValueError(f"Dados de Issue #{num} com estado inválido ou ausente: {issue.get('state')!r}.")
+        if num not in seen_numbers:
             seen_numbers.add(num)
             deduped_issues.append(issue)
-        elif num in seen_numbers:
+        else:
             print(f"Aviso: Issue #{num} duplicada detectada na paginação e desconsiderada.")
     issues = deduped_issues
 
@@ -138,7 +144,11 @@ def main() -> None:
     previous = {}
     if OUTPUT.exists():
         try:
-            previous = json.loads(OUTPUT.read_text(encoding="utf-8"))
+            loaded_prev = json.loads(OUTPUT.read_text(encoding="utf-8"))
+            if isinstance(loaded_prev, dict):
+                previous = loaded_prev
+            else:
+                print("Aviso: Snapshot anterior em formato inválido (esperado objeto JSON). Gerando novo arquivo.", file=sys.stderr)
         except Exception as e:
             print(f"Aviso: Não foi possível ler snapshot anterior ({e}). Gerando novo arquivo.", file=sys.stderr)
 
