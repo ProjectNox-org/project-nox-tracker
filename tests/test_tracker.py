@@ -161,28 +161,98 @@ def test_math_reconciliation():
     print("✓ Reconciliação matemática 100% comprovada e exata!")
 
 
+def _make_api_issue(
+    number: int,
+    state: str = "open",
+    created_at: str = "2026-10-01T10:00:00Z",
+    updated_at: str | None = None,
+    closed_at: str | None = None,
+    labels: list[dict] | None = None,
+) -> dict:
+    """Create a realistic GitHub Issues API item for unit tests."""
+    return {
+        "number": number,
+        "title": f"Issue {number}",
+        "html_url": f"https://github.com/ProjectNox-org/project-nox-requests/issues/{number}",
+        "state": state,
+        "state_reason": "completed" if state == "closed" else None,
+        "created_at": created_at,
+        "updated_at": updated_at or created_at,
+        "closed_at": closed_at if state == "closed" else None,
+        "comments": 0,
+        "labels": labels if labels is not None else [{"name": "type:manga", "color": "ffffff"}],
+        "reactions": {"total_count": 0, "+1": 0},
+        "user": {"login": "tester"},
+    }
+
+
+def _assert_strict_recent_order(issues: list[dict], context_label: str) -> None:
+    """Verify issues are ordered strictly by created_at DESC with number DESC tiebreaker."""
+    expected = sorted(
+        issues,
+        key=lambda x: (x.get("created_at") or "", int(x["number"])),
+        reverse=True,
+    )
+    actual_numbers = [i["number"] for i in issues]
+    expected_numbers = [i["number"] for i in expected]
+    assert actual_numbers == expected_numbers, (
+        f"Ordenação inválida ({context_label}): esperado {expected_numbers}, obtido {actual_numbers}"
+    )
+    for idx in range(len(issues) - 1):
+        a = issues[idx]
+        b = issues[idx + 1]
+        assert (a.get("created_at") or "") >= (b.get("created_at") or ""), (
+            f"Ordenação por created_at violada em {context_label}: #{a['number']} antes de #{b['number']}"
+        )
+
+
+def _validate_dataset_snapshot(issues: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Validate snapshot integrity, state counts, and ordering (0, 1, or N open issues)."""
+    assert isinstance(issues, list) and len(issues) > 0, "ERRO CRÍTICO: Dataset vazio ou inválido!"
+
+    seen_numbers = set()
+    open_issues = []
+    closed_issues = []
+    for issue in issues:
+        num = issue.get("number")
+        state = issue.get("state")
+        assert isinstance(num, int) and not isinstance(num, bool), f"Número inválido: {num!r}"
+        assert num not in seen_numbers, f"Issue duplicada no snapshot: #{num}"
+        seen_numbers.add(num)
+        assert state in ("open", "closed"), f"Estado inválido na Issue #{num}: {state!r}"
+        if state == "open":
+            open_issues.append(issue)
+        else:
+            closed_issues.append(issue)
+
+    assert len(issues) == len(open_issues) + len(closed_issues), "Contagem total inconsistente!"
+    _assert_strict_recent_order(issues, "dataset completo")
+    if open_issues:
+        _assert_strict_recent_order(open_issues, "tickets abertos")
+    return open_issues, closed_issues
+
+
 def test_real_dataset_and_ticket_ordering():
-    print("\n=== Teste 5: Ordenação e Consistência dos Tickets Abertos ===")
-    issues = load_issues()
-    open_issues = [i for i in issues if i.get("state") == "open"]
+    print("\n=== Teste 5: Ordenação e Consistência do Dataset e Tickets Abertos ===")
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        payload = json.load(f)
+    assert isinstance(payload, dict), "ERRO CRÍTICO: data/issues.json deve ser um objeto JSON!"
+    assert payload.get("generated_at"), "ERRO CRÍTICO: generated_at ausente em data/issues.json!"
+    issues = payload.get("issues")
+    open_issues, closed_issues = _validate_dataset_snapshot(issues)
     open_numbers = [i["number"] for i in open_issues]
 
-    print(f"Tickets abertos encontrados ({len(open_issues)}): {open_numbers}")
-    assert len(open_issues) > 0, "ERRO CRÍTICO: Nenhum ticket aberto encontrado no dataset!"
-
-    # Verificação de ordenação por criação recente (created_at DESC, tiebreaker number DESC)
-    sorted_by_recent = sorted(
-        open_issues,
-        key=lambda x: (x.get("created_at") or "", int(x["number"])),
-        reverse=True
+    print(
+        f"Dataset validado: Total={len(issues)} | Abertos={len(open_issues)} | Fechados={len(closed_issues)}"
     )
-    first_ticket = sorted_by_recent[0]
-    print(f"✓ Ticket mais recente aberto: #{first_ticket['number']} ({first_ticket['title']})")
-    for idx in range(len(sorted_by_recent) - 1):
-        a = sorted_by_recent[idx]
-        b = sorted_by_recent[idx + 1]
-        assert (a.get("created_at") or "") >= (b.get("created_at") or ""), "Ordenação por created_at violada!"
-    print(f"✓ Todos os {len(sorted_by_recent)} tickets abertos ordenados estritamente por created_at DESC!")
+    print(f"Tickets abertos encontrados ({len(open_issues)}): {open_numbers}")
+
+    if open_issues:
+        first_ticket = open_issues[0]
+        print(f"✓ Ticket mais recente aberto: #{first_ticket['number']} ({first_ticket['title']})")
+        print(f"✓ Todos os {len(open_issues)} tickets abertos ordenados estritamente por created_at DESC!")
+    else:
+        print("✓ Nenhuma Issue aberta no momento (0 abertos); integridade e ordenação do dataset preservadas.")
 
 
 def test_update_issues_production_script_dedup_pr_idempotency(tmp_path):
@@ -238,6 +308,142 @@ def test_update_issues_production_script_dedup_pr_idempotency(tmp_path):
 
     second_payload = json.loads(out_file.read_text(encoding="utf-8"))
     assert second_payload["generated_at"] == first_ts
+
+
+def test_update_issues_open_count_scenarios_and_idempotency(tmp_path):
+    """Valida cenários com 0, 1 e várias Issues abertas, ordenação, contagem e preservação de timestamp."""
+    scenarios = [
+        (
+            "zero_abertas_varias_fechadas",
+            [
+                _make_api_issue(101, state="closed", created_at="2026-10-01T10:00:00Z"),
+                _make_api_issue(103, state="closed", created_at="2026-10-02T10:00:00Z"),
+                _make_api_issue(102, state="closed", created_at="2026-10-02T10:00:00Z"),
+            ],
+            0,
+            3,
+            [103, 102, 101],
+        ),
+        (
+            "uma_aberta_varias_fechadas",
+            [
+                _make_api_issue(201, state="closed", created_at="2026-10-01T10:00:00Z"),
+                _make_api_issue(202, state="open", created_at="2026-10-03T10:00:00Z"),
+                _make_api_issue(203, state="closed", created_at="2026-10-02T10:00:00Z"),
+            ],
+            1,
+            2,
+            [202, 203, 201],
+        ),
+        (
+            "varias_abertas_e_fechadas",
+            [
+                _make_api_issue(301, state="closed", created_at="2026-10-01T10:00:00Z"),
+                _make_api_issue(302, state="open", created_at="2026-10-04T10:00:00Z"),
+                _make_api_issue(304, state="open", created_at="2026-10-04T10:00:00Z"),
+                _make_api_issue(303, state="open", created_at="2026-10-02T10:00:00Z"),
+                _make_api_issue(305, state="closed", created_at="2026-10-03T10:00:00Z"),
+            ],
+            3,
+            2,
+            [304, 302, 305, 303, 301],
+        ),
+    ]
+
+    for name, api_batch, expected_open, expected_closed, expected_order in scenarios:
+        out_file = tmp_path / f"{name}.json"
+        with patch.object(update_issues, "OUTPUT", out_file), \
+             patch.object(update_issues, "get_page", side_effect=[api_batch]):
+            update_issues.main()
+
+        payload = json.loads(out_file.read_text(encoding="utf-8"))
+        open_issues, closed_issues = _validate_dataset_snapshot(payload["issues"])
+        assert len(open_issues) == expected_open, f"Falha em {name}: abertas"
+        assert len(closed_issues) == expected_closed, f"Falha em {name}: fechadas"
+        assert [i["number"] for i in payload["issues"]] == expected_order, f"Falha em {name}: ordenação"
+
+        with patch.object(sys.modules[__name__], "DATA_FILE", out_file):
+            test_real_dataset_and_ticket_ordering()
+
+        # Segunda execução sem alterações deve preservar generated_at mesmo com 0 abertas
+        first_ts = payload["generated_at"]
+        with patch.object(update_issues, "OUTPUT", out_file), \
+             patch.object(update_issues, "get_page", side_effect=[api_batch]):
+            update_issues.main()
+        second_payload = json.loads(out_file.read_text(encoding="utf-8"))
+        assert second_payload["generated_at"] == first_ts, f"Timestamp alterado sem mudança em {name}"
+
+
+def test_update_issues_rejects_incomplete_or_corrupted_data(tmp_path):
+    """Garante rejeição de resposta vazia, perda >50%, resposta não-lista e registros corrompidos."""
+    # 1. Resposta vazia da API não grava arquivo
+    empty_out = tmp_path / "empty.json"
+    with patch.object(update_issues, "OUTPUT", empty_out), \
+         patch.object(update_issues, "get_page", side_effect=[[]]):
+        try:
+            update_issues.main()
+            assert False, "Deveria rejeitar resposta vazia da API"
+        except ValueError as exc:
+            assert "Nenhuma Issue válida" in str(exc)
+    assert not empty_out.exists()
+
+    # 2. Queda abrupta (>50%) preserva snapshot anterior intacto
+    drop_out = tmp_path / "drop.json"
+    initial_batch = [_make_api_issue(i, state="closed") for i in range(1, 11)]
+    with patch.object(update_issues, "OUTPUT", drop_out), \
+         patch.object(update_issues, "get_page", side_effect=[initial_batch]):
+        update_issues.main()
+    original_text = drop_out.read_text(encoding="utf-8")
+
+    with patch.object(update_issues, "OUTPUT", drop_out), \
+         patch.object(update_issues, "get_page", side_effect=[[initial_batch[0]]]):
+        try:
+            update_issues.main()
+            assert False, "Deveria rejeitar perda >50% dos dados"
+        except ValueError as exc:
+            assert "perda de dados" in str(exc)
+    assert drop_out.read_text(encoding="utf-8") == original_text
+
+    # 3. Item corrompido (sem number ou com state inválido) é rejeitado antes da escrita
+    for bad_item in [
+        {"title": "Sem number", "state": "open"},
+        _make_api_issue(50, state="invalid_state"),
+        "not-a-dict",
+    ]:
+        bad_out = tmp_path / "bad.json"
+        with patch.object(update_issues, "OUTPUT", bad_out), \
+             patch.object(update_issues, "get_page", side_effect=[[bad_item]]):
+            try:
+                update_issues.main()
+                assert False, f"Deveria rejeitar item corrompido: {bad_item!r}"
+            except ValueError:
+                pass
+        assert not bad_out.exists()
+
+    # 4. get_page rejeita JSON não-lista da API do GitHub
+    class _FakeResponse:
+        def __init__(self, body: bytes):
+            self._body = body
+        def read(self):
+            return self._body
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            return False
+
+    with patch.object(update_issues, "urlopen", return_value=_FakeResponse(b'{"message": "bad"}')):
+        try:
+            update_issues.get_page(1)
+            assert False, "Deveria rejeitar resposta não-lista em get_page"
+        except ValueError as exc:
+            assert "esperado list" in str(exc)
+
+    with patch.object(update_issues, "urlopen", return_value=_FakeResponse(b"{corrupted")):
+        try:
+            update_issues.get_page(1)
+            assert False, "Deveria rejeitar JSON inválido em get_page"
+        except json.JSONDecodeError:
+            pass
 
 
 def test_update_issues_aborts_on_page_limit(tmp_path):
