@@ -1,7 +1,39 @@
 {
-  "generated_at": "2026-11-25T00:36:45.024400+00:00",
+  "generated_at": "2026-11-26T13:14:44.030467+00:00",
   "repository": "ProjectNox-org/project-nox-requests",
   "issues": [
+    {
+      "number": 183,
+      "title": "[Fonte indisponível]: Starlight Scan",
+      "html_url": "https://github.com/ProjectNox-org/project-nox-requests/issues/183",
+      "state": "open",
+      "state_reason": null,
+      "created_at": "2026-11-26T13:14:15Z",
+      "updated_at": "2026-11-26T13:14:24Z",
+      "closed_at": null,
+      "comments": 0,
+      "labels": [
+        {
+          "name": "Mangá",
+          "color": "3b82f6"
+        },
+        {
+          "name": "Fonte indisponível",
+          "color": "64748b"
+        },
+        {
+          "name": "Em análise",
+          "color": "eab308"
+        }
+      ],
+      "reactions": {
+        "total_count": 0,
+        "+1": 0
+      },
+      "author": {
+        "login": "Pacoton"
+      }
+    },
     {
       "number": 182,
       "title": "[Problema na extensão]: Xxx yaoi — Problemas no 3xyaoi",
